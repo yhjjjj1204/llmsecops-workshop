@@ -1,0 +1,36 @@
+name: LLMSecOps Workshop CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run Promptfoo tests
+        run: npx --yes promptfoo@latest eval -c promptfooconfig.yaml
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t workshop-llm:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: image
+          image-ref: workshop-llm:${{ github.sha }}
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: "0"

@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+ollama
+langchain
+langchain-core
+deepeval
+pytest
+prometheus_client
+langfuse
+python-dotenv
+pyyaml

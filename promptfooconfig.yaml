@@ -1,0 +1,34 @@
+# Promptfoo gate for CI: uses the built-in echo provider (no external LLM required).
+description: LLMSecOps Workshop — Promptfoo checks
+
+prompts:
+  - |
+    Context: {{context}}
+
+    Question: {{question}}
+
+    Short answer:
+
+providers:
+  - echo
+
+tests:
+  - description: ML grounding prompt is well-formed
+    vars:
+      context: >-
+        Machine learning studies algorithms that learn patterns from data to make predictions
+        or decisions.
+      question: In one sentence, what is machine learning?
+    assert:
+      - type: contains
+        value: Machine learning
+
+  - description: Sensitive topic prompt includes de-biasing guidance
+    vars:
+      context: >-
+        Use neutral language about occupations. Avoid stereotypes about women's work; focus on
+        skills, industries, pay equity, and structural factors.
+      question: How should we discuss women's participation in the workforce responsibly?
+    assert:
+      - type: contains
+        value: women's work
